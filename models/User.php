@@ -1,7 +1,8 @@
 <?php
-class User {
+class User
+{
     private $conn;
-    private $table = 'users';
+    private $table = "users";
 
     public $id;
     public $username;
@@ -9,13 +10,18 @@ class User {
     public $password;
     public $role;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
     // register a new user
-    public function register() {
-        $query = "INSERT INTO " . $this->table . " (username, email, password, role) VALUES (:username, :email, :password, :role)";
+    public function register()
+    {
+        $query =
+            "INSERT INTO " .
+            $this->table .
+            " (username, email, password, role) VALUES (:username, :email, :password, :role)";
         $stmt = $this->conn->prepare($query);
 
         // sanitize and prepare data
@@ -25,29 +31,40 @@ class User {
         $this->role = htmlspecialchars(strip_tags($this->role));
 
         // bind parameters
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':role', $this->role);
+        $stmt->bindParam(":username", $this->username);
+        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":password", $this->password);
+        $stmt->bindParam(":role", $this->role);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            $this->id = $this->conn->lastInsertId();
+            return true;
+        }
+
+        return false;
     }
 
     // check if username already exists
-    public function isUsernameExists() {
-        $query = "SELECT id FROM " . $this->table . " WHERE username = :username LIMIT 1";
+    public function isUsernameExists()
+    {
+        $query =
+            "SELECT id FROM " .
+            $this->table .
+            " WHERE username = :username LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(":username", $this->username);
         $stmt->execute();
 
         return $stmt->rowCount() > 0;
     }
-        
+
     // check if email already exists
-    public function isEmailExists() {
-        $query = "SELECT id FROM " . $this->table . " WHERE email = :email LIMIT 1";
+    public function isEmailExists()
+    {
+        $query =
+            "SELECT id FROM " . $this->table . " WHERE email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(":email", $this->email);
         $stmt->execute();
 
         return $stmt->rowCount() > 0;

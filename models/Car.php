@@ -1,7 +1,8 @@
 <?php
-class Car {
+class Car
+{
     private $conn;
-    private $table = 'cars';
+    private $table = "cars";
 
     public $id;
     public $brand;
@@ -16,33 +17,24 @@ class Car {
     public $created_at;
     public $updated_at;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
     // create a new car
-    public function create() {
-
-    }
+    public function create() {}
 
     // get all car list
-    public function getAll() {
-
-    }
+    public function getAll() {}
 
     // get one car by ID
-    public function getById($id) {
-
-    }
+    public function getById($id) {}
 
     // update a car
-    public function update($id) {
-
-    }
+    public function update($id) {}
 
     // delete a car
-    public function delete($id) {
-
-    }
+    public function delete($id) {}
 }
 ?>
