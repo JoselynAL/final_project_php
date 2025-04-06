@@ -22,6 +22,11 @@ class AuthController extends BaseController
 
         if (!$user || !password_verify($password, $user["password"])) {
             http_response_code(401);
+            // Log when login failed
+            $this->logAudit(null, "login_failed", "users", null, null, [
+                "username" => $username,
+            ]);
+
             return json_encode(["message" => "Invalid username or password"]);
         }
 
@@ -31,6 +36,8 @@ class AuthController extends BaseController
             "email" => $user["email"],
             "role" => $user["role"],
         ];
+        // Log when login success
+        $this->logAudit($user["id"], "login", "users", $user["id"], null, null);
 
         http_response_code(200);
         return json_encode([
@@ -40,9 +47,14 @@ class AuthController extends BaseController
     }
 
     // POST /api/logout
-    public static function logout()
+    public function logout()
     {
+        $userId = $_SESSION["user"]["id"] ?? null;
         session_destroy();
+        if ($userId !== null) {
+            // Log when user logout
+            $this->logAudit($userId, "logout", "users", $userId, null, null);
+        }
         http_response_code(200);
         return json_encode(["message" => "Logged out successfully."]);
     }

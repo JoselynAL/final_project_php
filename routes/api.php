@@ -23,13 +23,14 @@ if ($method === "POST" && preg_match('/\/api\/register$/', $requestUri)) {
 // POST /api/login → user login
 elseif ($method === "POST" && preg_match('/\/api\/login$/', $requestUri)) {
     $input = json_decode(file_get_contents("php://input"), true);
-    $controller = new AuthController($db, $input);
+    $controller = new AuthController($db);
     echo $controller->login($db, $input);
 }
 
 // POST /api/logout → user logout
 elseif ($method === "POST" && preg_match('/\/api\/logout$/', $requestUri)) {
-    echo AuthController::logout();
+    $controller = new AuthController($db);
+    echo $controller->logout();
 }
 
 // GET /api/profile → check session & logged in user
