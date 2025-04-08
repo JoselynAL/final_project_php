@@ -15,15 +15,26 @@ class UserController {
             return json_encode(['message' => 'All fields are required.']);
         }
 
+        $errors = [];
+
+        // validate role
+        $validRoles = ['admin', 'seller', 'customer'];
+        if (!in_array($data['role'], $validRoles)) {
+            $errors[] = 'Invalid role. Must be one of: admin, seller, customer.';
+        }
+
+        // validate email format
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Invalid email format.';
+        }
+
         $user = new User($this->db);
         $user->username = $data['username'];
         $user->email = $data['email'];
         $user->password = $data['password'];
         $user->role = $data['role'];
 
-        // Check for duplicate username/email
-        $errors = [];
-
+        // check for duplicate username/email
         if ($user->isUsernameExists()) {
             $errors[] = 'Username already exists.';
         }
@@ -32,15 +43,16 @@ class UserController {
             $errors[] = 'Email already exists.';
         }
 
+        // return all validation errors
         if (!empty($errors)) {
             http_response_code(400);
-            echo json_encode([
+            return json_encode([
                 'message' => 'Validation errors occurred.',
                 'errors' => $errors
             ]);
-            return;
         }
 
+        // proceed with registration
         if ($user->register()) {
             http_response_code(201);
             return json_encode(['message' => 'User registered successfully.']);
