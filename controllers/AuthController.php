@@ -40,7 +40,7 @@ class AuthController {
         return json_encode(['message' => 'Logged out successfully.']);
     }
 
-    // GET /api/profile
+    // GET /api/check session
     public static function checkSession() {
         if (isset($_SESSION['user'])) {
             return json_encode(['user' => $_SESSION['user']]);
