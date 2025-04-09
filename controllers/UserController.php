@@ -27,14 +27,15 @@ class UserController extends BaseController
         $errors = [];
 
         // validate role
-        $validRoles = ['admin', 'seller', 'customer'];
-        if (!in_array($data['role'], $validRoles)) {
-            $errors[] = 'Invalid role. Must be one of: admin, seller, customer.';
+        $validRoles = ["admin", "seller", "customer"];
+        if (!in_array($data["role"], $validRoles)) {
+            $errors[] =
+                "Invalid role. Must be one of: admin, seller, customer.";
         }
 
         // validate email format
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Invalid email format.';
+        if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Invalid email format.";
         }
 
         $user = new User($this->db);
@@ -56,8 +57,8 @@ class UserController extends BaseController
         if (!empty($errors)) {
             http_response_code(400);
             return json_encode([
-                'message' => 'Validation errors occurred.',
-                'errors' => $errors,
+                "message" => "Validation errors occurred.",
+                "errors" => $errors,
             ]);
         }
 
