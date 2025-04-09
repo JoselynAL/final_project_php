@@ -1,7 +1,8 @@
 <?php
-class Car {
+class Car
+{
     private $conn;
-    private $table = 'cars';
+    private $table = "cars";
 
     public $id;
     public $brand;
@@ -16,11 +17,11 @@ class Car {
     public $created_at;
     public $updated_at;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
-    // create a new car
     public function create() {
         $query = "INSERT INTO " . $this->table . " 
                   (brand, model, year, price, color, description, image, status, user_id)
