@@ -190,6 +190,14 @@ class CarController extends BaseController
         }
 
         if ($this->car->delete($id)) {
+            $this->logAudit(
+                $_SESSION["user"]["id"] ?? null,
+                "delete_car",
+                "cars",
+                $id,
+                $existingCar,
+                null
+            );
             return json_encode(["message" => "Car deleted successfully."]);
         } else {
             http_response_code(500);
