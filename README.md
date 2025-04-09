@@ -54,7 +54,7 @@ Register a new user.
   "username": "exampleuser",
   "email": "user@example.com",
   "password": "securepassword",
-  "role": "admin" | "seller" | "customer"
+  "role": "'admin' | 'seller' | 'customer'"
 }
 ```
 
