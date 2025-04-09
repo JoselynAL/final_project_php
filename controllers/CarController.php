@@ -164,26 +164,6 @@ class CarController {
             return json_encode(['message' => 'User ID must be an integer.']);
         }
 
-        // Process image upload if available
-        if (isset($data['image']) && is_uploaded_file($data['image']['tmp_name'])) {
-            $uploadDir = __DIR__ . '/../uploads/cars/';
-            $imageName = basename($data['image']['name']);
-            $imagePath = $uploadDir . $imageName;
-
-            // Ensure the directory exists
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-
-            // Move the uploaded image to the directory
-            if (!move_uploaded_file($data['image']['tmp_name'], $imagePath)) {
-                http_response_code(500);
-                return json_encode(['message' => 'Failed to upload image.']);
-            }
-        } else {
-            $imageName = $existingCar['image']; // If no new image, keep the existing one
-        }
-
         $this->car->brand = $data['brand'] ?? $existingCar['brand'];
         $this->car->model = $data['model'] ?? $existingCar['model'];
         $this->car->year = $data['year'] ?? $existingCar['year'];
