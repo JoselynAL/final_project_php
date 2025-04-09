@@ -47,11 +47,10 @@ class AuthController extends BaseController
         return json_encode(["message" => "Logged out successfully."]);
     }
 
-    // GET /api/profile
-    public static function checkSession()
-    {
-        if (isset($_SESSION["user"])) {
-            return json_encode(["user" => $_SESSION["user"]]);
+    // GET /api/check session
+    public static function checkSession() {
+        if (isset($_SESSION['user'])) {
+            return json_encode(['user' => $_SESSION['user']]);
         } else {
             http_response_code(401);
             return json_encode(["message" => "Not logged in"]);
