@@ -164,6 +164,14 @@ class CarController extends BaseController
         $this->car->user_id = $data["user_id"] ?? $existingCar["user_id"];
 
         if ($this->car->update($id)) {
+            $this->logAudit(
+                $_SESSION["user"]["id"] ?? null,
+                "update_car",
+                "cars",
+                $id,
+                $existingCar,
+                $data
+            );
             return json_encode(["message" => "Car updated successfully."]);
         } else {
             http_response_code(500);
