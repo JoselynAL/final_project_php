@@ -75,7 +75,7 @@ Authenticate a user and start a session.
 
 Logout and destroy session.
 
-#### `GET /api/profile`
+#### `GET /api/checkSession`
 
 Check the current user session.
 
