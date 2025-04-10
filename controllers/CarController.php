@@ -79,17 +79,62 @@ class CarController extends BaseController
             ]);
         }
 
-        $this->car->brand = $data["brand"];
-        $this->car->model = $data["model"];
-        $this->car->year = $data["year"];
-        $this->car->price = $data["price"];
-        $this->car->color = $data["color"];
-        $this->car->description = $data["description"] ?? "";
-        $this->car->image = isset($data["image"])
-            ? basename($data["image"])
-            : null;
-        $this->car->status = $data["status"] ?? "in_stock";
+        // Define the list of predefined car images
+        $predefinedImages = [
+            'ferrariSF90.Stradale',
+            'Maserati.GT2Stradale',
+            'LamborghiniHuracan.Sterrat',
+            'AstonMartin.Valkyrie'
+        ];
+
+        // Process image upload
+        $uploadDirectory = 'car_images/';
+        $image = $data['image'];
+        $imageName = basename($image['name']);
+        $uploadFile = $uploadDirectory . $imageName;
+
+        // Validate the type of the uploaded image (only images)
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; // Add more types if necessary
+        if (!in_array($image['type'], $allowedTypes)) {
+            http_response_code(400);
+            return json_encode(['message' => 'Invalid image type. Only JPG, PNG, and GIF are allowed.']);
+        }
+
+        // Validate the size of the uploaded image (limit to 5MB)
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        if ($image['size'] > $maxSize) {
+            http_response_code(400);
+            return json_encode(['message' => 'Image size exceeds the limit of 5MB.']);
+        }
+
+        // Check if the image is one of the predefined images
+        if (in_array($imageName, $predefinedImages)) {
+            // Ensure the upload directory exists
+            if (!is_dir($uploadDirectory)) {
+                mkdir($uploadDirectory, 0777, true); // Create the directory if it doesn't exist
+            }
+
+            // Move the uploaded image to the directory
+            if (!move_uploaded_file($image['tmp_name'], $uploadFile)) {
+                http_response_code(500);
+                return json_encode(['message' => 'Failed to upload image.']);
+            }
+        } else {
+            // Handle error if the uploaded image is not a predefined one
+            http_response_code(400);
+            return json_encode(['message' => 'Invalid image uploaded.']);
+        }
+
+        $this->car->brand = $data['brand'];
+        $this->car->model = $data['model'];
+        $this->car->year = $data['year'];
+        $this->car->price = $data['price'];
+        $this->car->color = $data['color'];
+        $this->car->description = $data['description'] ?? '';
+        $this->car->image = isset($data['image']) ? basename($data['image']) : null;
+        $this->car->status = $data['status'] ?? 'in_stock';
         $this->car->user_id = $_SESSION["user"]["id"];
+
 
         if ($this->car->create()) {
             http_response_code(201);
