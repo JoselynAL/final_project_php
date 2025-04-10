@@ -2,5 +2,7 @@
 !/car_images/.gitkeep
 
 /config/*
+!/config/.gitkeep
+
 
 .DS_Store
