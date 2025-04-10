@@ -150,7 +150,6 @@ Each create, update, and delete operation on cars is recorded in the `audit_logs
 ├── README.md
 ├── car_images
 ├── config
-│   └── Database.php
 ├── controllers
 │   ├── AuthController.php
 │   ├── BaseController.php
