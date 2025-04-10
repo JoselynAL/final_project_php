@@ -1,4 +1,6 @@
 /car_images/*
 !/car_images/.gitkeep
 
-/config/
+/config/*
+
+.DS_Store
