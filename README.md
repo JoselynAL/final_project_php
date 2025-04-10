@@ -112,7 +112,7 @@ Create a new car.
 }
 ```
 
-#### `PUT /api/cars/{id}`
+#### `POST /api/cars/{id}`
 
 Role required: `admin` or `seller`
 
