@@ -26,6 +26,14 @@ class CarController extends BaseController
         $car = $this->car->getById($id);
 
         if ($car) {
+            $this->logAudit(
+                $_SESSION["user"]["id"] ?? null,
+                "view_car_detail",
+                "cars",
+                $id,
+                null,
+                null
+            );
             return json_encode($car);
         } else {
             http_response_code(404);

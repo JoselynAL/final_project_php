@@ -33,8 +33,11 @@ elseif ($method === "POST" && preg_match('/\/api\/logout$/', $requestUri)) {
     echo $controller->logout();
 }
 
-// GET /api/check session → check session & logged in user
-elseif ($method === "GET" && preg_match('/\/api\/profile$/', $requestUri)) {
+// GET /api/checkSession → check session & logged in user
+elseif (
+    $method === "GET" &&
+    preg_match('/\/api\/checkSession$/', $requestUri)
+) {
     AuthMiddleware::check();
     echo AuthController::checkSession();
 }
