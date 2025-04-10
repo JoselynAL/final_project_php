@@ -63,20 +63,30 @@ class UserController extends BaseController
         }
 
         // proceed with registration
-        if ($user->register()) {
-            http_response_code(201);
-            $this->logAudit(
-                $user->id,
-                "create_user",
-                "users",
-                $user->id,
-                null,
-                $data
-            );
-            return json_encode(["message" => "User registered successfully."]);
-        } else {
+        try {
+            if ($user->register()) {
+                http_response_code(201);
+                $this->logAudit(
+                    $user->id,
+                    "create_user",
+                    "users",
+                    $user->id,
+                    null,
+                    $data
+                );
+                return json_encode([
+                    "message" => "User registered successfully.",
+                ]);
+            } else {
+                http_response_code(500);
+                return json_encode(["message" => "Failed to register user."]);
+            }
+        } catch (PDOException $e) {
             http_response_code(500);
-            return json_encode(["message" => "Failed to register user."]);
+            return json_encode([
+                "message" => "Database error during registration.",
+                "error" => $e->getMessage(),
+            ]);
         }
     }
 }

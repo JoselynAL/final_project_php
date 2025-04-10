@@ -16,9 +16,17 @@ class AuthController extends BaseController
         $username = $input["username"];
         $password = $input["password"];
 
-        $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            return json_encode([
+                "message" => "Database error",
+                "error" => $e->getMessage(),
+            ]);
+        }
 
         if (!$user || !password_verify($password, $user["password"])) {
             http_response_code(401);
@@ -60,9 +68,10 @@ class AuthController extends BaseController
     }
 
     // GET /api/check session
-    public static function checkSession() {
-        if (isset($_SESSION['user'])) {
-            return json_encode(['user' => $_SESSION['user']]);
+    public static function checkSession()
+    {
+        if (isset($_SESSION["user"])) {
+            return json_encode(["user" => $_SESSION["user"]]);
         } else {
             http_response_code(401);
             return json_encode(["message" => "Not logged in"]);

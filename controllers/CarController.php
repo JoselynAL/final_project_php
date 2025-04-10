@@ -15,29 +15,44 @@ class CarController extends BaseController
     // GET /api/cars
     public function getAll()
     {
-        $stmt = $this->car->getAll();
-        $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return json_encode($cars);
+        try {
+            $stmt = $this->car->getAll();
+            $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return json_encode($cars);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            return json_encode([
+                "message" => "Database error",
+                "error" => $e->getMessage(),
+            ]);
+        }
     }
 
     // GET /api/cars/{id}
     public function getOne($id)
     {
-        $car = $this->car->getById($id);
-
-        if ($car) {
-            $this->logAudit(
-                $_SESSION["user"]["id"] ?? null,
-                "view_car_detail",
-                "cars",
-                $id,
-                null,
-                null
-            );
-            return json_encode($car);
-        } else {
-            http_response_code(404);
-            return json_encode(["message" => "Car not found"]);
+        try {
+            $car = $this->car->getById($id);
+            if ($car) {
+                $this->logAudit(
+                    $_SESSION["user"]["id"] ?? null,
+                    "view_car_detail",
+                    "cars",
+                    $id,
+                    null,
+                    null
+                );
+                return json_encode($car);
+            } else {
+                http_response_code(404);
+                return json_encode(["message" => "Car not found"]);
+            }
+        } catch (PDOException $e) {
+            http_response_code(500);
+            return json_encode([
+                "message" => "Database error",
+                "error" => $e->getMessage(),
+            ]);
         }
     }
 
@@ -126,10 +141,21 @@ class CarController extends BaseController
             }
 
             // Move the uploaded image to the directory
-            if (!move_uploaded_file($image["tmp_name"], $uploadFile)) {
+            try {
+                if (!move_uploaded_file($image["tmp_name"], $uploadFile)) {
+                    http_response_code(500);
+                    return json_encode([
+                        "message" => "Failed to upload image.",
+                    ]);
+                }
+            } catch (Exception $e) {
                 http_response_code(500);
-                return json_encode(["message" => "Failed to upload image."]);
+                return json_encode([
+                    "message" => "Image upload failed",
+                    "error" => $e->getMessage(),
+                ]);
             }
+
             $data["image"] = $imageName;
         } else {
             http_response_code(400);
@@ -145,21 +171,28 @@ class CarController extends BaseController
         $this->car->image = $data["image"];
         $this->car->status = $data["status"] ?? "in_stock";
         $this->car->user_id = $_SESSION["user"]["id"];
-
-        if ($this->car->create()) {
-            http_response_code(201);
-            $this->logAudit(
-                $this->car->user_id ?? null,
-                "create_car",
-                "cars",
-                $this->car->id,
-                null,
-                $data
-            );
-            return json_encode(["message" => "Car created successfully."]);
-        } else {
+        try {
+            if ($this->car->create()) {
+                http_response_code(201);
+                $this->logAudit(
+                    $this->car->user_id ?? null,
+                    "create_car",
+                    "cars",
+                    $this->car->id,
+                    null,
+                    $data
+                );
+                return json_encode(["message" => "Car created successfully."]);
+            } else {
+                http_response_code(500);
+                return json_encode(["message" => "Failed to create car."]);
+            }
+        } catch (PDOException $e) {
             http_response_code(500);
-            return json_encode(["message" => "Failed to create car."]);
+            return json_encode([
+                "message" => "Database error",
+                "error" => $e->getMessage(),
+            ]);
         }
     }
 
@@ -325,20 +358,27 @@ class CarController extends BaseController
             http_response_code(404);
             return json_encode(["message" => "Car not found."]);
         }
-
-        if ($this->car->delete($id)) {
-            $this->logAudit(
-                $_SESSION["user"]["id"] ?? null,
-                "delete_car",
-                "cars",
-                $id,
-                $existingCar,
-                null
-            );
-            return json_encode(["message" => "Car deleted successfully."]);
-        } else {
+        try {
+            if ($this->car->delete($id)) {
+                $this->logAudit(
+                    $_SESSION["user"]["id"] ?? null,
+                    "delete_car",
+                    "cars",
+                    $id,
+                    $existingCar,
+                    null
+                );
+                return json_encode(["message" => "Car deleted successfully."]);
+            } else {
+                http_response_code(500);
+                return json_encode(["message" => "Failed to delete car."]);
+            }
+        } catch (PDOException $e) {
             http_response_code(500);
-            return json_encode(["message" => "Failed to delete car."]);
+            return json_encode([
+                "message" => "Database error",
+                "error" => $e->getMessage(),
+            ]);
         }
     }
 }
