@@ -59,22 +59,20 @@ elseif (
 elseif ($method === "POST" && preg_match('/\/api\/cars$/', $requestUri)) {
     AuthMiddleware::check();
     RoleMiddleware::allowOnly(["admin", "seller"]);
-    $input = json_decode(file_get_contents("php://input"), true);
     $controller = new CarController($db);
-    echo $controller->create($input);
+    echo $controller->create();
 }
 
-// PUT /api/cars/{id} → update car (admin or seller only)
+// POST /api/cars/{id} → update car (admin or seller only)
 elseif (
-    $method === "PUT" &&
+    $method === "POST" &&
     preg_match('/\/api\/cars\/(\d+)$/', $requestUri, $matches)
 ) {
     AuthMiddleware::check();
     RoleMiddleware::allowOnly(["admin", "seller"]);
-    $carId = $matches[1];
-    $input = json_decode(file_get_contents("php://input"), true);
+    $carId = $matches[1]; //$matches[0] = /api/cars/123, $matches[1] = 123
     $controller = new CarController($db);
-    echo $controller->update($carId, $input);
+    echo $controller->update($carId);
 }
 
 // DELETE /api/cars/{id} → delete car (admin only)

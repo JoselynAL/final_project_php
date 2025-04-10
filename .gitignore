@@ -1,0 +1,4 @@
+/car_images/*
+!/car_images/.gitkeep
+
+/config/

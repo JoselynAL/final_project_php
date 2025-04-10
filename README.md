@@ -148,21 +148,22 @@ Each create, update, and delete operation on cars is recorded in the `audit_logs
 ```bash
 .
 ├── README.md
+├── car_images
 ├── config
-│ └── Database.php
+│   └── Database.php
 ├── controllers
-│ ├── AuthController.php
-│ ├── BaseController.php
-│ ├── CarController.php
-│ └── UserController.php
+│   ├── AuthController.php
+│   ├── BaseController.php
+│   ├── CarController.php
+│   └── UserController.php
 ├── middlewares
-│ ├── AuthMiddleware.php
-│ └── RoleMiddleware.php
+│   ├── AuthMiddleware.php
+│   └── RoleMiddleware.php
 ├── models
-│ ├── Car.php
-│ └── User.php
+│   ├── Car.php
+│   └── User.php
 ├── public
-│ └── index.php
+│   └── index.php
 └── routes
-└── api.php
+    └── api.php
 ```
